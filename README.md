@@ -62,6 +62,20 @@ compare. The four token-free engines are pre-selected.
 
 ---
 
+## Hear what the cleanup does (before trusting it)
+
+The "Clean audio first" toggle dereverbs + denoises your audio before diarization,
+but the web app deletes that cleaned audio when it's done — so you can't hear it. To
+actually *listen* to the before/after on a real recording, run:
+
+```bash
+.venv-denoise/bin/python clean_audio.py "OSCE encounter 3.mp4"
+```
+
+It writes two files next to your recording — `...original.wav` and `...cleaned.wav` —
+that you open in QuickTime and compare by ear. No diarization, nothing deleted, nothing
+leaves your computer. Use it to decide whether the cleanup is worth turning on.
+
 ## The engines
 
 | Engine | Transcription | Diarization | Needs a token? |

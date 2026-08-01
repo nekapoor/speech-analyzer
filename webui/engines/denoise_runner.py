@@ -31,29 +31,26 @@ def _dereverb(y: np.ndarray, sr: int) -> np.ndarray:
     return z[0]
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("audio")           # 16k mono wav from the parent
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--no-dereverb", action="store_true")
-    ap.add_argument("--no-denoise", action="store_true")
-    args = ap.parse_args()
-
+def enhance_wav(in_path: str, out_path: str, dereverb: bool = True,
+                denoise: bool = True) -> None:
+    """Dereverb + denoise a wav -> out_path. Shared by the web app and the
+    standalone clean_audio.py CLI. Never raises: on any failure it copies the
+    input through untouched."""
     t0 = time.time()
     try:
-        y, sr = sf.read(args.audio)
+        y, sr = sf.read(in_path)
         if y.ndim > 1:                 # force mono
             y = y.mean(axis=1)
         y = y.astype(np.float64)
 
-        if not args.no_dereverb:
+        if dereverb:
             try:
                 log("dereverberating (WPE) ...")
                 y = _dereverb(y, sr)
             except Exception as e:
                 log(f"dereverb skipped ({e})")
 
-        if not args.no_denoise:
+        if denoise:
             try:
                 log("denoising ...")
                 import noisereduce as nr
@@ -64,11 +61,22 @@ def main():
         # normalize to avoid clipping, write 16-bit pcm
         peak = float(np.max(np.abs(y))) or 1.0
         y = (y / peak * 0.95).astype(np.float32)
-        sf.write(args.out, y, sr, subtype="PCM_16")
-        log(f"done in {round(time.time()-t0,1)}s -> {args.out}")
+        sf.write(out_path, y, sr, subtype="PCM_16")
+        log(f"done in {round(time.time()-t0,1)}s -> {out_path}")
     except Exception as e:
         log(f"enhancement failed, passing audio through untouched: {e}")
-        shutil.copyfile(args.audio, args.out)
+        shutil.copyfile(in_path, out_path)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("audio")           # 16k mono wav from the parent
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--no-dereverb", action="store_true")
+    ap.add_argument("--no-denoise", action="store_true")
+    args = ap.parse_args()
+    enhance_wav(args.audio, args.out,
+                dereverb=not args.no_dereverb, denoise=not args.no_denoise)
 
 
 if __name__ == "__main__":
