@@ -1,0 +1,6 @@
+# Installed into the ISOLATED .venv-denoise.
+# Provides: local audio enhancement (WPE dereverberation + spectral denoise) for
+# echoey far-field recordings. Pure Python — no build tools, no cloud, ~1s per file.
+nara_wpe==0.0.11
+noisereduce==3.0.3
+soundfile==0.14.0

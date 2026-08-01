@@ -72,6 +72,19 @@ Without access, whisperX still transcribes + aligns; its diarization cell shows 
 Without a token, whisperX still runs — it just transcribes + aligns and its
 diarization column says "SKIPPED: no HuggingFace token".
 
+## Clean audio first (dereverb + denoise)
+
+The **"Clean audio first"** checkbox runs a local audio-enhancement pass before any
+engine sees the audio: WPE dereverberation (`nara_wpe`) + spectral denoise
+(`noisereduce`), in `.venv-denoise`. Aimed at echoey far-field room recordings
+(OSCE CCTV-style mics), where reverb smears voices together and wrecks diarization.
+
+It runs in ~1s, fully local, and degrades gracefully (if it can't help, it passes the
+audio through untouched). It's **experimental** — on some audio it helps, on some it
+doesn't. The honest test is your own recordings: **run the same clip with it on vs.
+off** and compare. It is *not* a magic fix for far-field reverberant single-mic audio;
+the durable fix is better source audio (a lav/table mic, or separate-track recording).
+
 ## Min / max speakers
 
 Only whisperX uses these (pyannote can auto-detect count, or you can bound it).

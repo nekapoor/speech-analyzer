@@ -15,6 +15,7 @@ _ROOT = Path(__file__).resolve().parents[2]
 _ENG = _ROOT / "webui" / "engines"
 _PARA_PY = _ROOT / ".venv-parakeet" / "bin" / "python"
 _NEMO_PY = _ROOT / ".venv-nemo" / "bin" / "python"
+_DENOISE_PY = _ROOT / ".venv-denoise" / "bin" / "python"
 
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
@@ -40,6 +41,25 @@ def _subprocess_json(py: Path, script: str, wav: Path, extra: list[str], label: 
             tail = "\n".join((proc.stderr or "").strip().splitlines()[-8:])
             raise RuntimeError(f"{label} failed (exit {proc.returncode}):\n{tail}")
         return json.loads(out.read_text())
+
+
+def enhance_audio(src_audio: str, out_wav: str) -> str:
+    """Dereverb + denoise the source into out_wav (a 16k mono wav). Local, ~1s.
+
+    Runs in .venv-denoise. On any failure the runner passes the audio through
+    untouched, so this never blocks a comparison — worst case you get the raw audio.
+    """
+    if not _DENOISE_PY.exists():
+        raise RuntimeError(".venv-denoise not installed — run setup.sh")
+    with tempfile.TemporaryDirectory() as td:
+        raw = _extract_wav(src_audio, td)
+        cmd = [str(_DENOISE_PY), str(_ENG / "denoise_runner.py"), str(raw),
+               "--out", str(out_wav)]
+        proc = subprocess.run(cmd, capture_output=True, text=True)
+        if not Path(out_wav).exists():
+            tail = "\n".join((proc.stderr or "").strip().splitlines()[-6:])
+            raise RuntimeError(f"enhancement failed:\n{tail}")
+    return out_wav
 
 
 def _parakeet_transcribe(wav: Path) -> dict:

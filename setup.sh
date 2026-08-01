@@ -56,6 +56,7 @@ build .venv            requirements.txt          required
 # --- isolated engine venvs (optional; each adds engines to the comparison) --
 build .venv-parakeet   requirements-parakeet.txt optional   # Parakeet transcription (Apple GPU)
 build .venv-nemo       requirements-nemo.txt     optional   # Sortformer diarization (ungated)
+build .venv-denoise    requirements-denoise.txt  optional   # audio cleanup (dereverb + denoise)
 build .venv-whisperx   requirements-whisperx.txt optional   # whisperX + pyannote (needs HF token)
 
 # --- token file ------------------------------------------------------------

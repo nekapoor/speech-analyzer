@@ -102,16 +102,36 @@ def _run_engine(job_id, key, audio_path, opts):
             JOBS[job_id]["engines"][key] = {
                 "status": "error", "error": str(e),
                 "elapsed": round(time.time() - started, 1)}
-    finally:
-        # FERPA hygiene: once every engine on this job is done, delete the on-disk
-        # audio copy. Results live only in the browser; nothing is retained here.
-        with JOBS_LOCK:
-            engs = JOBS.get(job_id, {}).get("engines", {})
-            if engs and all(e["status"] != "running" for e in engs.values()):
-                try:
-                    os.remove(audio_path)
-                except OSError:
-                    pass
+
+
+def _dispatch(job_id, keys, raw_path, opts):
+    """Coordinate one job: optionally enhance the audio ONCE, run every engine on
+    it, then delete all audio from disk (FERPA). Runs in its own thread so /run
+    returns immediately."""
+    audio = raw_path
+    paths = {raw_path}
+    if opts.get("enhance"):
+        try:
+            from engines import compose
+            enhanced = str(UPLOADS / f"{job_id}_enhanced.wav")
+            compose.enhance_audio(raw_path, enhanced)
+            audio, _ = enhanced, paths.add(enhanced)
+        except Exception as e:
+            with JOBS_LOCK:
+                JOBS[job_id]["enhance_error"] = str(e)  # fall back to raw audio
+
+    threads = [threading.Thread(target=_run_engine, args=(job_id, k, audio, opts),
+                                daemon=True) for k in keys]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    for p in paths:  # every engine done -> nothing is retained on disk
+        try:
+            os.remove(p)
+        except OSError:
+            pass
 
 
 @app.route("/")
@@ -149,6 +169,7 @@ def run():
         "min_speakers": _int("min_speakers"),
         "max_speakers": _int("max_speakers"),
         "hf_token": token,
+        "enhance": request.form.get("enhance") == "1",
     }
 
     job_id = uuid.uuid4().hex[:12]
@@ -162,9 +183,8 @@ def run():
             "engines": {k: {"status": "running"} for k in keys},
         }
 
-    for k in keys:
-        threading.Thread(target=_run_engine, args=(job_id, k, str(dest), opts),
-                         daemon=True).start()
+    threading.Thread(target=_dispatch, args=(job_id, keys, str(dest), opts),
+                     daemon=True).start()
 
     return jsonify({"job_id": job_id, "engines": keys, "file": safe})
 

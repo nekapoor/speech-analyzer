@@ -126,6 +126,14 @@
       </div>
     </div>
 
+    <div style="margin-top:16px">
+      <label style="display:inline-flex; align-items:center; cursor:pointer; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:12px 14px">
+        <input type="checkbox" id="enhance" style="margin-right:8px">
+        <span><b>Clean audio first</b> (dereverb + denoise) —
+          <span style="color:var(--muted)">experimental; may help echoey far-field recordings. Runs locally in ~1s. Try it on vs. off.</span></span>
+      </label>
+    </div>
+
     <div style="margin-top:18px; display:flex; align-items:center; gap:16px">
       <button class="go" id="go">Run comparison</button>
       <span class="hint" id="runhint"></span>
@@ -177,6 +185,7 @@ $('go').addEventListener('click', async () => {
   fd.append('min_speakers', $('min_speakers').value);
   fd.append('max_speakers', $('max_speakers').value);
   fd.append('hf_token', $('hf_token').value);
+  fd.append('enhance', $('enhance').checked ? '1' : '0');
 
   $('go').disabled = true;
   $('runhint').innerHTML = '<span class="spinner"></span> processing on this computer (nothing leaves it)…';
