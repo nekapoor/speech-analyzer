@@ -1,0 +1,4 @@
+# Installed into the ISOLATED .venv-whisperx (its deps conflict with the main venv).
+# Provides: whisperX (faster-whisper + forced alignment) + pyannote diarization.
+# Diarization needs a HuggingFace token + accepting the pyannote model licenses.
+whisperx==3.8.6

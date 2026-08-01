@@ -1,0 +1,45 @@
+# ============================================================================
+#  SECRETS & PROTECTED DATA — never commit these.
+# ============================================================================
+# HuggingFace token / any environment secrets
+.env
+.env.local
+webui/.secrets/
+
+# FERPA-protected: audio, transcripts, and any analysis output.
+# NOTHING derived from real recordings should ever leave the machine.
+out/
+webui/uploads/
+*.wav
+*.mp3
+*.m4a
+*.mp4
+*.mov
+*.mkv
+*.aac
+*.flac
+*.aiff
+
+# ============================================================================
+#  Big / regenerable — recreated by setup.sh and first run.
+# ============================================================================
+# Virtual environments (all of them — main + per-engine isolated venvs)
+.venv/
+.venv-whisperx/
+.venv-parakeet/
+.venv-nemo/
+.venv*/
+
+# Downloaded model caches
+.cache/
+*.nemo
+
+# ============================================================================
+#  Junk
+# ============================================================================
+__pycache__/
+*.pyc
+.DS_Store
+
+# gstack local tooling state
+.gstack/

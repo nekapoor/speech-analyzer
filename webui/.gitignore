@@ -1,0 +1,5 @@
+.secrets/
+uploads/
+*.pyc
+__pycache__/
+.gstack/

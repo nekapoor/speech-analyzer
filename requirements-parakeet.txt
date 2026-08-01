@@ -1,0 +1,4 @@
+# Installed into the ISOLATED .venv-parakeet.
+# Provides: NVIDIA Parakeet-TDT transcription via Apple MLX (Apple-Silicon Mac ONLY).
+# No token, no signup. Model downloads on first run.
+parakeet-mlx==0.5.2

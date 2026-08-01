@@ -1,0 +1,4 @@
+# Installed into the ISOLATED .venv-nemo (heavy toolkit, kept away from everything).
+# Provides: NVIDIA NeMo Sortformer diarization (ungated, overlap-aware, no token).
+# Model downloads on first run. NeMo is large (~several GB with deps).
+nemo_toolkit[asr]==2.7.3

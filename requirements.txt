@@ -1,0 +1,25 @@
+# Offline speech analyzer — pinned to the versions that work on Neeraj's machine.
+# Only two direct dependencies; everything else is pulled in transitively.
+#
+# Requires Python 3.11 or 3.12 (NOT 3.13+ — ML wheels lag).
+# Also requires ffmpeg installed on the system (see README_INSTALL.md) — it is
+# an external program, not a pip package.
+
+faster-whisper==1.2.1      # local Whisper transcription (CTranslate2, CPU/int8)
+praat-parselmouth==0.4.7   # local acoustic/prosody metrics (Praat)
+
+# Pinned transitive deps that occasionally break across versions:
+ctranslate2==4.8.1         # the actual inference engine faster-whisper runs on
+onnxruntime==1.28.0        # used by the built-in voice-activity filter
+
+# --- Diarization (student vs patient) — needed only by analyze_speech.py ---
+# These are the heavy ones (~1.5 GB with torch). If you only ever use
+# analyze_speech_nodiar.py, you can delete these four lines.
+# Still fully local and token-free: the ECAPA speaker model is public.
+speechbrain==1.1.0         # ECAPA speaker-embedding model
+torch==2.13.0              # runs the speaker model (CPU)
+torchaudio==2.11.0         # audio backend speechbrain expects
+scikit-learn==1.9.0        # KMeans clustering into two speakers
+
+# --- Web comparison UI (webui/) ---
+flask==3.1.3               # local web server for the engine comparison UI
