@@ -1,0 +1,4 @@
+# Installed into the ISOLATED .venv-openai.
+# Provides: the original OpenAI Whisper library (github.com/openai/whisper),
+# run locally via transcribe.py. Downloads weights once from a CDN; no API calls.
+openai-whisper==20250625

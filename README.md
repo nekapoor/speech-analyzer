@@ -76,6 +76,24 @@ It writes two files next to your recording — `...original.wav` and `...cleaned
 that you open in QuickTime and compare by ear. No diarization, nothing deleted, nothing
 leaves your computer. Use it to decide whether the cleanup is worth turning on.
 
+## Just want a plain transcript with timestamps?
+
+To transcribe with the **original OpenAI Whisper** library (runs locally — downloads
+weights once, never calls the OpenAI API):
+
+```bash
+.venv-openai/bin/python transcribe.py "OSCE encounter 3.mp4" --model medium.en
+```
+
+Writes `...whisper.txt` (readable, timestamped), `...whisper.srt` (subtitles), and
+`...whisper.json` (with word-level times), next to the recording. Models:
+`tiny.en → base.en → small.en → medium.en → large-v3` (bigger = more accurate +
+slower; on an M2, `large-v3` on CPU is many minutes for a 10-min file).
+
+> This is the *same model* faster-whisper already runs — use it when you want the
+> reference implementation specifically. It does not produce a more accurate
+> transcript than the built-in engines, and it has no diarization (see below).
+
 ## Have a speaker-labeled transcript already? Timestamp it.
 
 When auto-diarization can't handle the audio (far-field, reverberant OSCE video), a
