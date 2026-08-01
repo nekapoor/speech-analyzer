@@ -76,6 +76,33 @@ It writes two files next to your recording — `...original.wav` and `...cleaned
 that you open in QuickTime and compare by ear. No diarization, nothing deleted, nothing
 leaves your computer. Use it to decide whether the cleanup is worth turning on.
 
+## Have a speaker-labeled transcript already? Timestamp it.
+
+When auto-diarization can't handle the audio (far-field, reverberant OSCE video), a
+person can just tell the speakers apart by ear and write it out:
+
+```
+Pharmacist: Hi, I'm the intern pharmacist, how are you today?
+Patient: I've been a bit worried about the new medication.
+Pharmacist: That's completely understandable...
+```
+
+Then let the machine do the tedious part — attach real timestamps:
+
+```bash
+.venv/bin/python align_transcript.py "OSCE encounter 3.mp4" "encounter 3.txt"
+```
+
+It lays down a timing track with faster-whisper, aligns *your* words onto it by
+text-matching, and carries your speaker labels through — producing
+`...aligned.txt` / `...aligned.json` with start/end times per turn. Wording doesn't
+have to match the audio exactly; it aligns what lines up and interpolates the rest.
+No cloud, no new installs, no diarization guesswork. This is the reliable path for
+hard audio: **human diarizes, machine timestamps.**
+
+Transcript format: one turn per block, each starting with `Speaker:`. Lines without
+a `Speaker:` prefix continue the current turn.
+
 ## The engines
 
 | Engine | Transcription | Diarization | Needs a token? |
