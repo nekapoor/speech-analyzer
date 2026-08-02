@@ -1,0 +1,6 @@
+[00:02.940 --> 00:05.700] STUDENT: Hi, my name is Tiffany and I'm the intern pharmacist helping you today.
+[00:05.840 --> 00:07.460] STUDENT: Can you confirm your name and date of birth?
+[00:07.880 --> 00:11.680] PATIENT: Yes, my name is Mary Smith and my birthday is June 10, 1999.
+[00:12.160 --> 00:13.800] STUDENT: Okay, thank you. What can I help you with today?
+[00:14.080 --> 00:20.680] PATIENT: My doctor prescribed a new medication. I was diagnosed with diabetes and I'm stressed about it.
+[00:20.860 --> 00:21.780] STUDENT: Okay, let me take a look.

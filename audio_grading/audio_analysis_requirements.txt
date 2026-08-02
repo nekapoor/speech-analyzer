@@ -1,0 +1,5 @@
+librosa>=0.10.2,<0.12
+matplotlib>=3.8,<4
+numpy>=1.26,<3
+praat-parselmouth>=0.4.6,<1
+soundfile>=0.12,<1
